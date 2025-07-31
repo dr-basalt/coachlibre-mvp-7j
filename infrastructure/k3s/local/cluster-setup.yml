@@ -17,3 +17,17 @@ metadata:
 type: Opaque
 data:
   admin-password: Y2hhbmdlbWU= # changeme en base64
+
+
+---
+# Configuration Storage Classes pour local
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-path
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: rancher.io/local-path
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+
