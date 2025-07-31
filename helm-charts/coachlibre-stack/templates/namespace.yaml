@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "coachlibre-stack.fullname" . }}
+  labels:
+    {{- include "coachlibre-stack.labels" . | nindent 4 }}
+    tenant: {{ .Values.global.tenant.name }}
