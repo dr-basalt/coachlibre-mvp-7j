@@ -1,0 +1,33 @@
+deployment:
+  replicas: 1
+
+ports:
+  web:
+    port: 8000
+    expose: true
+    exposedPort: 80
+  websecure:
+    port: 8443
+    expose: true
+    exposedPort: 443
+
+service:
+  type: LoadBalancer
+
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+
+providers:
+  kubernetesCRD:
+    enabled: true
+  kubernetesIngress:
+    enabled: true
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: admin@coachlibre.dev
+      storage: /data/acme.json
+      httpChallenge:
+        entryPoint: web
