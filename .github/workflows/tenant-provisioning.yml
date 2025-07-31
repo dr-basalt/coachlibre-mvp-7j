@@ -1,0 +1,42 @@
+name: Provision New Tenant
+
+on:
+  workflow_dispatch:
+    inputs:
+      tenant_name:
+        description: 'Tenant name'
+        required: true
+        type: string
+      tenant_domain:
+        description: 'Tenant domain'
+        required: true
+        type: string
+
+jobs:
+  provision-tenant:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+    
+    - name: Configure kubeconfig
+      run: |
+        echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+    
+    - name: Create tenant configuration
+      run: |
+        export TENANT_NAME="${{ github.event.inputs.tenant_name }}"
+        export TENANT_DOMAIN="${{ github.event.inputs.tenant_domain }}"
+        ./scripts/create-tenant.sh
+    
+    - name: Setup DNS
+      run: |
+        python3 scripts/cloudflare-dns.py \
+          --action create \
+          --domain "${{ github.event.inputs.tenant_domain }}" \
+          --ip "${{ secrets.CLUSTER_IP }}"
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
