@@ -1,34 +1,18 @@
-# CoachLibre MVP - Bootstrap Package
+# 🚀 CoachLibre MVP - Bootstrap Complet
 
-## 🚀 Quick Start
+Plateforme SaaS de coaching avec IA intégrée, architecture multi-tenant, et déploiement automatisé sur Kubernetes.
 
-### Local Development
-```bash
-# 1. Clone repository
-git clone https://github.com/your-org/coachlibre-mvp
-cd coachlibre-mvp
+## ✨ Fonctionnalités
 
-# 2. Bootstrap local K3s cluster
-./scripts/bootstrap-k3s-local.sh
+- 🤖 **IA intégrée** : Assistant conversationnel avec Flowise + CrewAI + Qdrant  
+- 🏗️ **Site Builder** : Edition inline avec TinaCMS + templates
+- 📹 **Visioconférence** : LiveKit WebRTC → HLS scaling
+- 🔄 **Workflows** : Automatisation n8n + agents CrewAI métiers
+- 🌐 **Multi-tenant** : Isolation complète + DNS automatique
+- 🔧 **GitOps** : Déploiement ArgoCD + Helm + Crossplane
+- 📊 **Monitoring** : Prometheus + Grafana intégrés
 
-# 3. Create your first tenant
-export TENANT_NAME=demo
-export TENANT_DOMAIN=demo.coachlibre.dev
-./scripts/create-tenant.sh
-```
-
-### Remote Production
-```bash
-# 1. Setup environment variables
-export SERVER_IP=your.server.ip
-export DOMAIN=coachlibre.com
-export CLOUDFLARE_API_TOKEN=your_token
-
-# 2. Bootstrap remote cluster
-./scripts/bootstrap-k3s-remote.sh
-```
-
-## 🏗️ Architecture
+## 🎯 Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -44,38 +28,96 @@ export CLOUDFLARE_API_TOKEN=your_token
                     └─────────────────┘
 ```
 
-## 🎯 Features
+## 🚀 Démarrage Rapide
 
-- ✅ Multi-tenant SaaS architecture
-- ✅ AI-powered coaching assistant
-- ✅ Inline site builder (TinaCMS)
-- ✅ Video calls (LiveKit)
-- ✅ Workflow automation (n8n)
-- ✅ GitOps deployment (ArgoCD)
-- ✅ Auto DNS management (Cloudflare)
+### Local (Développement)
+```bash
+git clone https://github.com/your-org/coachlibre-mvp
+cd coachlibre-mvp
 
-## 🔧 Tech Stack
+# Bootstrap K3s local
+./scripts/bootstrap-k3s-local.sh
 
-| Component | Technology |
-|-----------|------------|
-| Frontend | Astro + React Islands |
-| Backend | PayloadCMS + Node.js |
-| Database | PostgreSQL + Qdrant |
-| AI | Flowise + Ollama |
-| Workflow | n8n + CrewAI |
-| Video | LiveKit |
-| DevOps | K3s + ArgoCD + Helm |
-| DNS | Cloudflare API |
+# Créer votre premier tenant
+export TENANT_NAME=demo
+export TENANT_DOMAIN=demo.coachlibre.dev
+./scripts/create-tenant.sh
+```
 
-## 📚 Next Steps
+### Production (Hetzner/Oracle)
+```bash
+# Configuration
+export SERVER_IP=your.server.ip
+export DOMAIN=coachlibre.com
+export CLOUDFLARE_API_TOKEN=your_token
 
-1. Customize `config/tenant-wizard.yml` for your needs
-2. Add your integrations (Stripe, Google Calendar, etc.)
-3. Deploy additional environments (staging/prod)
-4. Scale with Crossplane for multi-cluster
+# Déploiement
+./scripts/bootstrap-k3s-remote.sh
+
+# Configuration secrets
+./scripts/setup-secrets.sh coachlibre-prod production
+
+# Test de santé
+./scripts/health-check.sh coachlibre-prod
+```
+
+## 📦 Stack Technique
+
+| Composant | Technologie | Port | Description |
+|-----------|-------------|------|-------------|
+| **Frontend** | Astro + React | 3000 | Site vitrine + SPA |
+| **Backend** | PayloadCMS | 3001 | API + Admin CMS |
+| **IA** | Flowise + Qdrant | 3002/6333 | Assistant + RAG |
+| **Workflows** | n8n + CrewAI | 5678 | Automatisation |
+| **Video** | LiveKit | 7880 | Visioconférence |
+| **Database** | PostgreSQL | 5432 | Données principales |
+
+## 🎮 Commandes Utiles
+
+```bash
+# 🔍 Status du cluster
+kubectl get pods,svc,ing -A
+
+# 📊 Monitoring
+kubectl port-forward -n monitoring svc/grafana 3000:80
+
+# 🧪 Tests
+./scripts/test-deployment.sh coachlibre-prod
+
+# 💾 Backup
+./scripts/backup-tenant.sh demo-tenant
+
+# 🌐 DNS Cloudflare
+python3 scripts/cloudflare-dns.py --action create-tenant --domain demo.coachlibre.com --ip 1.2.3.4
+```
+
+## 🏗️ Structure Projet
+
+```
+coachlibre-mvp/
+├── 🔄 .github/workflows/      # CI/CD GitHub Actions
+├── 📱 applications/           # Code source applications
+├── ⚙️ config/                 # Configurations & templates
+├── 📦 helm-charts/            # Charts Helm par service
+├── 🏗️ infrastructure/         # Infrastructure as Code
+├── 📋 scripts/               # Scripts d'automatisation
+└── 📚 docs/                  # Documentation complète
+```
+
+## 🎯 Prochaines Étapes
+
+1. **Personnaliser** `config/tenant-wizard.yml`
+2. **Configurer** secrets GitHub Actions
+3. **Déployer** premier tenant test
+4. **Intégrer** services externes (Stripe, Google Cal, etc.)
+5. **Scaler** avec Crossplane multi-cluster
 
 ## 🆘 Support
 
-- 📖 [Full Documentation](./docs/)
-- 🐛 [Issue Tracker](https://github.com/your-org/coachlibre-mvp/issues)
-- 💬 [Discord Community](https://discord.gg/coachlibre)
+- 📖 [Documentation](./docs/)
+- 🐛 [Issues](https://github.com/your-org/coachlibre-mvp/issues)  
+- 💬 [Discord](https://discord.gg/coachlibre)
+
+---
+
+**CoachLibre MVP** - De l'idée à la production en quelques minutes ! 🚀
