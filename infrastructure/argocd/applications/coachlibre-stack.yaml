@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: coachlibre-stack
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: coachlibre-stack
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/your-org/coachlibre-mvp
+    targetRevision: HEAD
+    path: helm-charts/coachlibre-stack
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: coachlibre-default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
