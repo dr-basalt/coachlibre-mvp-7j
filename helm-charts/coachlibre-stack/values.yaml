@@ -1,0 +1,161 @@
+# Configuration globale
+global:
+  tenant:
+    name: "default"
+    domain: "coachlibre.dev"
+  
+  imageRegistry: "docker.io"
+  imagePullSecrets: []
+
+# Frontend Astro
+frontend:
+  enabled: true
+  image:
+    repository: coachlibre/astro-frontend
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  
+  replicaCount: 2
+  
+  service:
+    type: ClusterIP
+    port: 3000
+  
+  ingress:
+    enabled: true
+    className: traefik
+    hosts:
+      - host: "{{ .Values.global.tenant.domain }}"
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: frontend-tls
+        hosts:
+          - "{{ .Values.global.tenant.domain }}"
+  
+  env:
+    - name: PAYLOAD_API_URL
+      value: "https://api.{{ .Values.global.tenant.domain }}"
+    - name: FLOWISE_API_URL  
+      value: "https://ai.{{ .Values.global.tenant.domain }}"
+
+# Backend PayloadCMS
+backend:
+  enabled: true
+  image:
+    repository: coachlibre/payload-backend
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  
+  replicaCount: 2
+  
+  service:
+    type: ClusterIP
+    port: 3001
+  
+  ingress:
+    enabled: true
+    className: traefik
+    hosts:
+      - host: "api.{{ .Values.global.tenant.domain }}"
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: backend-tls
+        hosts:
+          - "api.{{ .Values.global.tenant.domain }}"
+  
+  env:
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: postgres-secret
+          key: database-url
+    - name: PAYLOAD_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: payload-secret
+          key: secret
+
+# IA Stack
+flowise:
+  enabled: true
+  image:
+    repository: flowiseai/flowise
+    tag: "latest"
+  
+  service:
+    type: ClusterIP
+    port: 3002
+  
+  ingress:
+    enabled: true
+    className: traefik
+    hosts:
+      - host: "ai.{{ .Values.global.tenant.domain }}"
+    tls:
+      - secretName: flowise-tls
+
+# Workflow n8n
+n8n:
+  enabled: true
+  image:
+    repository: n8nio/n8n
+    tag: "latest"
+  
+  service:
+    type: ClusterIP
+    port: 5678
+  
+  ingress:
+    enabled: true
+    className: traefik
+    hosts:
+      - host: "workflows.{{ .Values.global.tenant.domain }}"
+
+# Vector Database
+qdrant:
+  enabled: true
+  image:
+    repository: qdrant/qdrant
+    tag: "latest"
+  
+  service:
+    type: ClusterIP
+    port: 6333
+
+# Visio LiveKit
+livekit:
+  enabled: true
+  image:
+    repository: livekit/livekit-server
+    tag: "latest"
+  
+  service:
+    type: ClusterIP
+    port: 7880
+  
+  ingress:
+    enabled: true
+    className: traefik
+    hosts:
+      - host: "meet.{{ .Values.global.tenant.domain }}"
+
+# Base de données
+postgres:
+  enabled: true
+  auth:
+    postgresPassword: "changeme"
+    database: "coachlibre"
+  
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+
+redis:
+  enabled: true
+  auth:
+    enabled: false
