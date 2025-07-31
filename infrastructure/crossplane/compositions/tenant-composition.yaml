@@ -1,0 +1,40 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: tenant-composition
+  labels:
+    provider: coachlibre
+spec:
+  compositeTypeRef:
+    apiVersion: coachlibre.com/v1alpha1
+    kind: XTenant
+  
+  resources:
+  - name: namespace
+    base:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: placeholder
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: metadata.name
+    
+  - name: helm-release
+    base:
+      apiVersion: helm.crossplane.io/v1beta1
+      kind: Release
+      spec:
+        forProvider:
+          chart:
+            name: coachlibre-stack
+            repository: https://charts.coachlibre.com
+          namespace: placeholder
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.namespace
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.domain
+      toFieldPath: spec.forProvider.values.global.tenant.domain
