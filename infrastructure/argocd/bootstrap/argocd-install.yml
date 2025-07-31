@@ -1,0 +1,23 @@
+server:
+  service:
+    type: LoadBalancer
+    annotations:
+      traefik.ingress.kubernetes.io/router.tls: "true"
+  
+  ingress:
+    enabled: true
+    hosts:
+      - argocd.coachlibre.dev
+    tls:
+      - secretName: argocd-tls
+        hosts:
+          - argocd.coachlibre.dev
+
+configs:
+  params:
+    server.insecure: true
+  
+  repositories:
+    coachlibre-mvp:
+      url: https://github.com/your-org/coachlibre-mvp
+      type: git
