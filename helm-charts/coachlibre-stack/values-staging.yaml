@@ -1,0 +1,42 @@
+global:
+  tenant:
+    name: "staging"
+    domain: "staging.coachlibre.com"
+  
+  imageRegistry: "docker.io"
+  imagePullSecrets: []
+
+frontend:
+  image:
+    tag: "staging-latest"
+  
+  replicaCount: 1
+  
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+backend:
+  image:
+    tag: "staging-latest"
+  
+  replicaCount: 1
+  
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 150m
+      memory: 256Mi
+
+postgres:
+  auth:
+    postgresPassword: "staging-password"
+  primary:
+    persistence:
+      size: 5Gi
