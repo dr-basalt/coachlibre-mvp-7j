@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k3s-local-config
+  namespace: kube-system
+data:
+  cluster-domain: "cluster.local"
+  service-cidr: "10.43.0.0/16"
+  cluster-cidr: "10.42.0.0/16"
+  
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: local-cluster-secrets
+  namespace: kube-system
+type: Opaque
+data:
+  admin-password: Y2hhbmdlbWU= # changeme en base64
