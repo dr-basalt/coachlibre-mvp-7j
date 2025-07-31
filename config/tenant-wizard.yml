@@ -1,0 +1,44 @@
+tenant:
+  name: "demo-coach"
+  domain: "demo.coachlibre.com"
+  email: "admin@demo.coachlibre.com"
+  
+  # Configuration spécifique
+  features:
+    site_builder: true
+    ai_assistant: true
+    video_calls: true
+    crm: true
+    workflows: true
+  
+  # Intégrations
+  integrations:
+    google_calendar: false
+    stripe: false
+    cloudflare: true
+  
+  # Resources K8s
+  resources:
+    frontend:
+      cpu: "100m"
+      memory: "128Mi"
+    backend:
+      cpu: "200m"
+      memory: "256Mi"
+    database:
+      storage: "5Gi"
+
+cloudflare:
+  api_token: "${CLOUDFLARE_API_TOKEN}"
+  zone_id: "${CLOUDFLARE_ZONE_ID}"
+  
+  dns_records:
+    - name: "{{ .tenant.domain }}"
+      type: "A"
+      proxied: true
+    - name: "api.{{ .tenant.domain }}"
+      type: "A"
+      proxied: true
+    - name: "ai.{{ .tenant.domain }}"
+      type: "A"
+      proxied: true
