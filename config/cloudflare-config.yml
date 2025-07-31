@@ -1,0 +1,65 @@
+cloudflare:
+  api_endpoint: "https://api.cloudflare.com/client/v4"
+  
+  # Configuration DNS par défaut
+  dns_defaults:
+    ttl: 300
+    proxied: true
+    
+  # Records DNS à créer pour chaque tenant
+  dns_templates:
+    - name: "{{ tenant.domain }}"
+      type: "A"
+      proxied: true
+      comment: "Main domain for {{ tenant.name }}"
+      
+    - name: "api.{{ tenant.domain }}"
+      type: "A" 
+      proxied: true
+      comment: "API endpoint for {{ tenant.name }}"
+      
+    - name: "ai.{{ tenant.domain }}"
+      type: "A"
+      proxied: true
+      comment: "AI services for {{ tenant.name }}"
+      
+    - name: "meet.{{ tenant.domain }}"
+      type: "A"
+      proxied: false  # WebRTC needs direct access
+      comment: "Video calls for {{ tenant.name }}"
+      
+    - name: "workflows.{{ tenant.domain }}"
+      type: "A"
+      proxied: true
+      comment: "n8n workflows for {{ tenant.name }}"
+
+  # Configuration WAF et Security
+  security:
+    waf_rules:
+      - description: "Block malicious requests"
+        expression: "(ip.geoip.country ne \"FR\" and ip.geoip.country ne \"US\" and ip.geoip.country ne \"CA\")"
+        action: "challenge"
+        
+    rate_limiting:
+      - name: "API Rate Limit"
+        threshold: 100
+        period: 60
+        action: "simulate"  # Pour commencer en mode monitoring
+        
+  # Configuration SSL/TLS
+  ssl:
+    mode: "full_strict"
+    min_tls_version: "1.2"
+    automatic_https_rewrites: true
+    
+  # Configuration Page Rules
+  page_rules:
+    - url: "api.*.coachlibre.com/*"
+      settings:
+        cache_level: "bypass"
+        security_level: "high"
+        
+    - url: "*.coachlibre.com/static/*"
+      settings:
+        cache_level: "cache_everything"
+        edge_cache_ttl: 86400
