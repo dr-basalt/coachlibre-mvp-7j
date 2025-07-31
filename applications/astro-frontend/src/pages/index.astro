@@ -1,0 +1,12 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import CoachGrid from '../components/CoachGrid.tsx';
+---
+
+<Layout title="CoachLibre - Trouvez votre coach idéal">
+  <Hero />
+  <CoachGrid client:load />
+</Layout>
+
+---
