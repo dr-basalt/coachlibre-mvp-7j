@@ -1,0 +1,17 @@
+users:
+  - name: root
+    ssh_authorized_keys:
+      - ${SSH_PUBLIC_KEY}
+
+packages:
+  - curl
+  - wget
+  - htop
+  - docker.io
+
+runcmd:
+  - systemctl enable docker
+  - systemctl start docker
+  - curl -sfL https://get.k3s.io | sh -s - --disable traefik
+  - mkdir -p /etc/rancher/k3s
+  - echo "write-kubeconfig-mode: 644" >> /etc/rancher/k3s/config.yaml
