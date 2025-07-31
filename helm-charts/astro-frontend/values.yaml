@@ -1,0 +1,43 @@
+replicaCount: 2
+
+image:
+  repository: coachlibre/astro-frontend
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 3000
+  targetPort: 3000
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: ""  # Will be templated
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+env:
+  PAYLOAD_API_URL: ""
+  TINA_CLIENT_ID: ""
+  TINA_TOKEN: ""
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
