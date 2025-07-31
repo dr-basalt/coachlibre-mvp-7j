@@ -1,0 +1,43 @@
+replicaCount: 1
+
+image:
+  repository: flowiseai/flowise
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 3000
+  targetPort: 3000
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  hosts:
+    - host: ""
+      paths:
+        - path: /
+          pathType: Prefix
+
+env:
+  DATABASE_PATH: "/opt/flowise/.flowise"
+  APIKEY_PATH: "/opt/flowise/.flowise"
+  LOG_LEVEL: "info"
+  DEBUG: "false"
+  PORT: "3000"
+
+persistence:
+  enabled: true
+  size: 5Gi
+  storageClass: ""
+  accessMode: ReadWriteOnce
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
