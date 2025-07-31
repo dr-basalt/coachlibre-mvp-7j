@@ -1,0 +1,45 @@
+replicaCount: 1
+
+image:
+  repository: n8nio/n8n
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 5678
+  targetPort: 5678
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  hosts:
+    - host: ""
+      paths:
+        - path: /
+          pathType: Prefix
+
+env:
+  GENERIC_TIMEZONE: "Europe/Paris"
+  N8N_BASIC_AUTH_ACTIVE: "true"
+  N8N_BASIC_AUTH_USER: "admin"
+  N8N_BASIC_AUTH_PASSWORD: "changeme"
+  WEBHOOK_URL: ""
+  N8N_PROTOCOL: "https"
+  NODE_ENV: "production"
+
+persistence:
+  enabled: true  
+  size: 2Gi
+  storageClass: ""
+  accessMode: ReadWriteOnce
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
