@@ -11,6 +11,13 @@ on:
         description: 'Tenant domain'
         required: true
         type: string
+      environment:
+        description: 'Environment'
+        required: true
+        type: choice
+        options:
+        - staging
+        - production
 
 jobs:
   provision-tenant:
@@ -26,13 +33,7 @@ jobs:
       run: |
         echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
     
-    - name: Create tenant configuration
-      run: |
-        export TENANT_NAME="${{ github.event.inputs.tenant_name }}"
-        export TENANT_DOMAIN="${{ github.event.inputs.tenant_domain }}"
-        ./scripts/create-tenant.sh
-    
-    - name: Setup DNS
+    - name: Create DNS records
       run: |
         python3 scripts/cloudflare-dns.py \
           --action create \
@@ -40,3 +41,10 @@ jobs:
           --ip "${{ secrets.CLUSTER_IP }}"
       env:
         CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    
+    - name: Deploy tenant
+      run: |
+        export TENANT_NAME="${{ github.event.inputs.tenant_name }}"
+        export TENANT_DOMAIN="${{ github.event.inputs.tenant_domain }}"
+        export ENVIRONMENT="${{ github.event.inputs.environment }}"
+        ./scripts/create-tenant.sh
